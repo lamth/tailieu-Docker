@@ -8,8 +8,6 @@
 - **ENTRYPOINT**: Cấu hình lệnh, file thực thi để chạy khi container chạy, không bị ghi đè lệnh khác với lệnh docker run.
 
 
-## ADD vs COPY
-
 
 ## Đẩy log của nginx ra stdout và stderr
 ```dockerfile
@@ -19,3 +17,22 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 ```
 
 
+## Một vài cách để cấu hình ứng dụng trong Docker container.
+### 1. Copy cấu file cấu hình vào trong Container.
+Chuẩn bị sẵn file cấu hình và COPY vào container, hoặc tiến hành sử file config của ứng dụng với `echo` hoặc `sed` thông qua RUN trong quá trình build image.
+
+### 2. Cấu hình động sử dụng biến môi trường.
+Đây là cách cấu hình phổ biến cho các image trên docker hub.
+Khi chạy container, cấu hình giá trị cho các biến môi trường( ví dụ `docker run -e -e MYSQL_ROOT_PASSWORD=123456 -d mysql:latest`). Sau đó, container entrypoint sẽ kiểm tra các biến môi trường và `sed` hay `echo` để cấu hình ứng dụng.
+
+### 2.1. Cấu hình động thông qua Key-Value database.
+Thay vì dùng biến môi trường, có thể cấu hình để entrypoint sẽ kết nối đến một Key-valua database trong mạng như `etcd` hay `consul` để lấy thông tin cấu hình.
+Sau đó có thể cấu hình ứng dụng trong container bằng cách chỉnh sửa các giá trị trên KV database.
+
+
+### 3. Cấu hình thông qua docker volume
+Docker volume cho phép ánh xạ file, thư mục trên host vào container. Từ đó có thể ánh xạ file cấu hình từ host vào file cấu hình của ứng dụng trong container để có thể trực tiếp chỉnh sửa cấu hình của ứng dụng từ host.
+
+
+
+## ~~the end of~~ the begining................
