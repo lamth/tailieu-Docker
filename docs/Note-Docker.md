@@ -35,4 +35,19 @@ Docker volume cho phép ánh xạ file, thư mục trên host vào container. T�
 
 
 
+## Build image từ scratch
+scratch là một image trống, nên khi build image từ scratch(`FROM scratch`) thì image được tạo ra gần như là không có base image, Docker cũng sẽ không tạo một layer cho câu lệnh`FROM scratch`. 
+
+Việc này đem lại bảo mật khi chúng ta hoàn toàn có thể kiểm soát soure code, filesystem của image.
+
+
+
+
+# some thing else:
+
+https://www.docker.com/blog/docker-golang/
+
+- Kinh ngiệm build image:
+https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+
 ## ~~the end of~~ the begining................
