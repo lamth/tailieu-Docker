@@ -42,6 +42,56 @@ Việc này đem lại bảo mật khi chúng ta hoàn toàn có thể kiểm so
 
 
 
+## Chạy và tắt các service của docker compose theo thứ tự.
+
+Bình thường dùng `depends_on` để khởi động container theo thứ tự nhưng nó chỉ phụ thuộc vào việc container đã chạy hay chưa mà không quan tâm đến trạng thái của dịch vụ chạy bên trong container đó.
+
+Cách tốt nhất là thiết kế thêm cho ứng dụng chức năng tự động kết nối lại khi gặp lỗi.
+
+Dùng script để đợi như kiểu:
+```
+version: "2"
+services:
+  web:
+    build: .
+    ports:
+      - "80:8000"
+    depends_on:
+      - "db"
+    command: ["./wait-for-it.sh", "db:5432", "--", "python", "app.py"]
+  db:
+    image: postgres
+```
+để kiểm tra các dịch vụ khác trước khi chạy ứng dụng chính.
+
+Thực gia nếu là version 2.1 thì có cái `condition: service_healthy` kiểu dựa theo healcheck của dịch vụ khác:
+```
+version: '2.1'
+
+services:
+  app:
+    build: app/.
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    links: 
+        - rabbit
+
+  rabbit:
+    build: rabbitmq/.
+    ports: 
+        - "15672:15672"
+        - "5672:5672"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+```
+https://stackoverflow.com/questions/31746182/docker-compose-wait-for-container-x-before-starting-y/41854997#41854997
+
+
+
 
 # some thing else:
 
